@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kapuctagram", "Kapuctagram\Kapuctagram.csproj", "{43F66FB4-18A5-4FED-B38B-91CECA5A6F1C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{43F66FB4-18A5-4FED-B38B-91CECA5A6F1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43F66FB4-18A5-4FED-B38B-91CECA5A6F1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43F66FB4-18A5-4FED-B38B-91CECA5A6F1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43F66FB4-18A5-4FED-B38B-91CECA5A6F1C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3E3C84E9-A983-48A2-BA1C-5FBC018B46EE}
+	EndGlobalSection
+EndGlobal
