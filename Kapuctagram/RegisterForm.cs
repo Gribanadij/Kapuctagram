@@ -47,9 +47,7 @@ namespace Kapuctagram
 
         private void RegisterB_Click(object sender, EventArgs e)
         {
-
+            DialogResult = DialogResult.OK;
         }
-
-        
     }
 }

@@ -16,7 +16,19 @@ namespace Kapuctagram
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new RegisterForm());
+            // Сначала показываем регистрацию как модальное окно
+            using (var registerForm = new RegisterForm())
+            {
+                var result = registerForm.ShowDialog();
+
+                // Если пользователь нажал "Зарегистрироваться" (а не просто закрыл окно)
+                if (result == DialogResult.OK)
+                {
+                    // Запускаем основную форму чата
+                    Application.Run(new KAPUCTAgram.KAPUCTAgram("User"));
+                }
+                // Если DialogResult != OK — приложение просто завершится
+            }
         }
     }
 }
