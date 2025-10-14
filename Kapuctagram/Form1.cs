@@ -17,29 +17,27 @@ namespace Kapuctagram
             InitializeComponent();
         }
 
+        private void RegisterForm_Load(object sender, EventArgs e)
+        {
+            RegisterB.Enabled = false;
+        }
+
         private void PasswordTB_TextChanged(object sender, EventArgs e)
         {
-            string password = Diff_of_PasswordL.Text;
+            string password = PasswordTB.Text;
 
-            Diff_of_PasswordL.Text = "Твой пароль херня";
-            if (password.Length < 20)
+            string resultOfTest = StringUtils.TestPassword(password);
+            bool isPasswordOK = false;
+
+            RegisterB.Enabled = false;
+            if (resultOfTest == "Твой пароль херня" || resultOfTest == "хз пон")
             {
-                ShowError("Пароль слишком короткий!");
-                Console.WriteLine(StringUtils.GetLength(password));
-                return;
+                isPasswordOK = true;
+                RegisterB.Enabled = true;
             }
-            else if (StringUtils.GetUppercaseCount(password) < 5)
-            {
-                ShowError("Недостаточно заглавных букв!");
-                Console.WriteLine(StringUtils.GetUppercaseCount(password));
-                return;
-            }
-            else if (StringUtils.GetSpecialCharCount(password) < 5)
-            {
-                ShowError("Недостаточно специальных символов!");
-                Console.WriteLine(StringUtils.GetSpecialCharCount(password));
-                return;
-            }
+            ShowError(resultOfTest);
+            
+
         }
         private void ShowError(string message)
         {
@@ -51,5 +49,7 @@ namespace Kapuctagram
         {
 
         }
+
+        
     }
 }
