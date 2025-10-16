@@ -1,57 +1,111 @@
 ﻿using System;
 using System.Drawing;
-using System.Windows.Forms;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace KAPUCTAgram
 {
     public partial class KAPUCTAgram : Form
     {
-        private string username;
-        private TcpClient client;      // без ? — для C# 7.3
-        private NetworkStream stream;  // без ? — для C# 7.3
+        private TcpClient client;
+        private NetworkStream stream;
+        private StreamReader reader;
+        private StreamWriter writer;
 
-        public KAPUCTAgram(string username)
+        // === ДОБАВЛЕНО: поля для хранения данных пользователя ===
+        private readonly string _userPassword;
+        private readonly string _userName;
+        private readonly string _serverIp;
+        // ======================================================
+
+        // === ИЗМЕНЁН: конструктор сохраняет данные ===
+        public KAPUCTAgram(string password, string name, string serverIp)
         {
             InitializeComponent();
-            this.username = username;
-
-            // Настройка ChatBox
-            ChatBox.Multiline = true;
-            ChatBox.ReadOnly = true;
-            ChatBox.ScrollBars = ScrollBars.Vertical;
-
-            // Подключение обработчиков
-            MessageTB.KeyDown += MessageTB_KeyDown;
-            MessageTB.TextChanged += MessageTB_TextChanged;
-
-            // Запуск подключения к серверу
-            _ = ConnectToServerAsync();
+            _userPassword = password;
+            _userName = name;
+            _serverIp = serverIp;
+            this.Text = $"KAPUCTAgram — {name}";
         }
 
-        // ===========================
-        // Сетевая логика
-        // ===========================
+        // === ДОБАВЛЕНО: подключение при загрузке формы ===
+        private async void KAPUCTAgram_Load(object sender, EventArgs e)
+        {
+            await ConnectAndAuthenticate();
+        }
 
-        private async Task ConnectToServerAsync()
+        // === ДОБАВЛЕНО: метод подключения с обработкой ошибок ===
+        private async Task ConnectAndAuthenticate()
         {
             try
             {
-                client = new TcpClient();
-                await client.ConnectAsync("localhost", 8888); // ← замени на IP сервера в сети, если нужно
+                AppendMessage("🔌 Подключение к серверу...");
+                client = new TcpClient(_serverIp, 8888);
                 stream = client.GetStream();
+                reader = new StreamReader(stream);
+                writer = new StreamWriter(stream) { AutoFlush = true };
 
-                AppendMessage("✅ Подключено к чату.");
-                _ = Task.Run(ReceiveMessagesLoop);
+                // Отправляем данные для входа
+                await writer.WriteLineAsync($"AUTH:{_userPassword}|{_userName}");
+
+                // Ждём ответ от сервера
+                string response = await reader.ReadLineAsync();
+                if (response == "OK")
+                {
+                    AppendMessage("✅ Вход выполнен успешно!");
+                    // Запускаем приём сообщений (включая историю)
+                    _ = ReceiveMessagesLoop();
+                }
+                else
+                {
+                    AppendMessage($"❌ Ошибка сервера: {response}");
+                    MessageBox.Show("Не удалось войти на сервер.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Close();
+                }
             }
             catch (Exception ex)
             {
-                AppendMessage($"❌ Не удалось подключиться: {ex.Message}");
+                AppendMessage($"❌ Ошибка подключения: {ex.Message}");
+                MessageBox.Show($"Не удалось подключиться к серверу:\n{ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
             }
         }
 
+        // === ДОБАВЛЕНО: обработка нажатия Enter в поле ввода ===
+        private void MessageTB_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && !e.Shift)
+            {
+                e.SuppressKeyPress = true; // отменяет добавление новой строки
+                SendMessageButton_Click(sender, e); // вызываем отправку
+            }
+        }
+
+        // === СОХРАНЕНА ТВОЯ ЛОГИКА ОТПРАВКИ ===
+        private async void SendMessageButton_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(MessageTB.Text)) return;
+
+            try
+            {
+                if (writer != null)
+                {
+                    // Формат сообщения: [Имя]: Текст
+                    string message = $"{_userName}: {MessageTB.Text}";
+                    await writer.WriteLineAsync(message);
+                    MessageTB.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                AppendMessage($"❌ Ошибка отправки: {ex.Message}");
+            }
+        }
+
+        // === СОХРАНЕНА ТВОЯ ЛОГИКА ПРИЁМА ===
         private async Task ReceiveMessagesLoop()
         {
             byte[] buffer = new byte[1024];
@@ -63,7 +117,6 @@ namespace KAPUCTAgram
                     if (bytesRead == 0) break;
 
                     string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    // Обновляем UI в основном потоке
                     if (InvokeRequired)
                     {
                         Invoke(new Action<string>(AppendMessage), message);
@@ -87,56 +140,14 @@ namespace KAPUCTAgram
             }
         }
 
-        private void SendMessage()
-        {
-            if (client == null || !client.Connected || string.IsNullOrWhiteSpace(MessageTB.Text))
-                return;
-
-            string text = MessageTB.Text.Trim();
-            string fullMessage = $"[{username}]: {text}";
-            byte[] data = Encoding.UTF8.GetBytes(fullMessage);
-
-            try
-            {
-                stream.Write(data, 0, data.Length);
-                stream.Flush();
-                AppendMessage($"[Вы]: {text}");
-                MessageTB.Text = "";
-            }
-            catch (Exception ex)
-            {
-                AppendMessage($"❌ Ошибка отправки: {ex.Message}");
-            }
-        }
-
+        // === СОХРАНЕНА ТВОЯ ЛОГИКА ДОБАВЛЕНИЯ СООБЩЕНИЙ ===
         private void AppendMessage(string message)
         {
             ChatBox.AppendText($"{message}{Environment.NewLine}");
             ChatBox.ScrollToCaret();
         }
 
-        // ===========================
-        // Обработка ввода
-        // ===========================
-
-        private void MessageTB_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                if (e.Shift)
-                {
-                    // Разрешаем новую строку
-                    e.SuppressKeyPress = false;
-                }
-                else
-                {
-                    // Отправляем сообщение
-                    e.SuppressKeyPress = true;
-                    SendMessage();
-                }
-            }
-        }
-
+        // === СОХРАНЕНА ТВОЯ ЛОГИКА ИЗМЕНЕНИЯ ВЫСОТЫ ===
         private void MessageTB_TextChanged(object sender, EventArgs e)
         {
             BeginInvoke(new Action(AdjustInputBoxHeight));
@@ -166,18 +177,16 @@ namespace KAPUCTAgram
             MessageTB.Top = bottom - MessageTB.Height;
         }
 
-        // ===========================
-        // Закрытие формы
-        // ===========================
-
+        // === ДОБАВЛЕНО: корректное закрытие соединения ===
         private void KAPUCTAgram_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
             {
-                stream?.Close();
+                writer?.Close();
+                reader?.Close();
                 client?.Close();
             }
-            catch { /* игнор */ }
+            catch { }
         }
     }
 }

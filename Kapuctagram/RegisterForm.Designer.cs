@@ -32,12 +32,15 @@
             this.PasswordTB = new System.Windows.Forms.TextBox();
             this.RegisterInfoL = new System.Windows.Forms.Label();
             this.Diff_of_PasswordL = new System.Windows.Forms.Label();
+            this.AutoLoginB = new System.Windows.Forms.Button();
+            this.NameTB = new System.Windows.Forms.TextBox();
+            this.NameL = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // RegisterB
             // 
             this.RegisterB.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.RegisterB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.RegisterB.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.RegisterB.Location = new System.Drawing.Point(0, 203);
             this.RegisterB.Name = "RegisterB";
             this.RegisterB.Size = new System.Drawing.Size(284, 58);
@@ -48,19 +51,21 @@
             // 
             // PasswordTB
             // 
-            this.PasswordTB.Location = new System.Drawing.Point(12, 25);
+            this.PasswordTB.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.PasswordTB.Location = new System.Drawing.Point(6, 72);
             this.PasswordTB.MaxLength = 40;
             this.PasswordTB.Name = "PasswordTB";
-            this.PasswordTB.Size = new System.Drawing.Size(266, 20);
+            this.PasswordTB.Size = new System.Drawing.Size(266, 24);
             this.PasswordTB.TabIndex = 1;
             this.PasswordTB.TextChanged += new System.EventHandler(this.PasswordTB_TextChanged);
             // 
             // RegisterInfoL
             // 
             this.RegisterInfoL.AutoSize = true;
-            this.RegisterInfoL.Location = new System.Drawing.Point(12, 48);
+            this.RegisterInfoL.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.RegisterInfoL.Location = new System.Drawing.Point(3, 99);
             this.RegisterInfoL.Name = "RegisterInfoL";
-            this.RegisterInfoL.Size = new System.Drawing.Size(192, 52);
+            this.RegisterInfoL.Size = new System.Drawing.Size(241, 68);
             this.RegisterInfoL.TabIndex = 2;
             this.RegisterInfoL.Text = "・минимум 20 символов\r\n・минимум 5 заглавных букв\r\n・минимум 5 специальных символов\r" +
     "\n・минимум 5 цифр";
@@ -69,18 +74,53 @@
             // 
             this.Diff_of_PasswordL.AutoSize = true;
             this.Diff_of_PasswordL.BackColor = System.Drawing.SystemColors.Control;
+            this.Diff_of_PasswordL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Diff_of_PasswordL.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.Diff_of_PasswordL.Location = new System.Drawing.Point(9, 9);
+            this.Diff_of_PasswordL.Location = new System.Drawing.Point(3, 54);
             this.Diff_of_PasswordL.Name = "Diff_of_PasswordL";
-            this.Diff_of_PasswordL.Size = new System.Drawing.Size(88, 13);
+            this.Diff_of_PasswordL.Size = new System.Drawing.Size(102, 15);
             this.Diff_of_PasswordL.TabIndex = 3;
             this.Diff_of_PasswordL.Text = "Введите пароль";
+            // 
+            // AutoLoginB
+            // 
+            this.AutoLoginB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AutoLoginB.Location = new System.Drawing.Point(172, 170);
+            this.AutoLoginB.Name = "AutoLoginB";
+            this.AutoLoginB.Size = new System.Drawing.Size(100, 30);
+            this.AutoLoginB.TabIndex = 4;
+            this.AutoLoginB.Text = "AutoLogin";
+            this.AutoLoginB.UseVisualStyleBackColor = true;
+            // 
+            // NameTB
+            // 
+            this.NameTB.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.NameTB.Location = new System.Drawing.Point(6, 27);
+            this.NameTB.MaxLength = 40;
+            this.NameTB.Name = "NameTB";
+            this.NameTB.Size = new System.Drawing.Size(266, 24);
+            this.NameTB.TabIndex = 5;
+            // 
+            // NameL
+            // 
+            this.NameL.AutoSize = true;
+            this.NameL.BackColor = System.Drawing.SystemColors.Control;
+            this.NameL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.NameL.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.NameL.Location = new System.Drawing.Point(3, 9);
+            this.NameL.Name = "NameL";
+            this.NameL.Size = new System.Drawing.Size(171, 15);
+            this.NameL.TabIndex = 6;
+            this.NameL.Text = "Введите имя (опционально)";
             // 
             // RegisterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.NameL);
+            this.Controls.Add(this.NameTB);
+            this.Controls.Add(this.AutoLoginB);
             this.Controls.Add(this.Diff_of_PasswordL);
             this.Controls.Add(this.RegisterInfoL);
             this.Controls.Add(this.PasswordTB);
@@ -92,7 +132,6 @@
             this.Load += new System.EventHandler(this.RegisterForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
@@ -101,6 +140,9 @@
         private System.Windows.Forms.TextBox PasswordTB;
         private System.Windows.Forms.Label RegisterInfoL;
         private System.Windows.Forms.Label Diff_of_PasswordL;
+        private System.Windows.Forms.Button AutoLoginB;
+        private System.Windows.Forms.TextBox NameTB;
+        private System.Windows.Forms.Label NameL;
     }
 }
 
